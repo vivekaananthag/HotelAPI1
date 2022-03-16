@@ -21,4 +21,8 @@
     <ProjectReference Include="..\Hotel.Interface\Hotel.Interface.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="DBScripts\" />
+  </ItemGroup>
+
 </Project>

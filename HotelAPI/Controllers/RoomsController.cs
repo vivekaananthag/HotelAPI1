@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Hotel.Models.DTO;
-using Hotel.Interface.DAL;
 using Hotel.Interface.Service;
 
 namespace HotelAPI.Controllers
@@ -22,7 +21,7 @@ namespace HotelAPI.Controllers
         // GET: api/Rooms
         [Route("GetRooms")]
         [HttpGet]
-        public async Task<IEnumerable<RoomDTO>> GetRooms()
+        public async Task<IEnumerable<RoomDto>> GetRooms()
         {
             return await _roomService.GetRooms();
         }
@@ -74,7 +73,7 @@ namespace HotelAPI.Controllers
 
         [Route("AddRoom")]
         [HttpPost]
-        public async Task<RoomDTO> PostRoom(RoomDTO roomDto)
+        public async Task<RoomDto> PostRoom(RoomDto roomDto)
         {
             return await _roomService.AddRoom(roomDto);
         }

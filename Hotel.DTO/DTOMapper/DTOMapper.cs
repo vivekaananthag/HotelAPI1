@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿
 using Hotel.Models.DTO;
 using Hotel.Models.Database;
 
@@ -8,43 +6,51 @@ namespace Hotel.Models.DTOMapper
 {
     public static class DTOMapper
     {
-        public static RoomDTO MapRoomsDBToDto(Room room)
+        public static RoomDto MapRoomsDBToDto(Room room)
         {
-            var roomDto = new RoomDTO
+            var roomDto = new RoomDto
             {
                 RoomId = room.RoomId,
-                RoomName = room.RoomName,
+                RoomNumber = room.RoomNumber,
                 RoomTypeId = room.RoomTypeId,
                 RoomType = room.RoomType != null ? room.RoomType.RoomTypeName : String.Empty
             };
             return roomDto;
         }
 
-        public static Room MapRoomsDtoToDB(RoomDTO roomDto)
+        public static Room MapRoomsDtoToDB(RoomDto roomDto)
         {
             var room = new Room
             {
                 RoomId = roomDto.RoomId,
-                RoomName = roomDto.RoomName,
+                RoomNumber = roomDto.RoomNumber,
                 RoomTypeId = roomDto.RoomTypeId
             };
             return room;
         }
 
-        public static BookingDTO MapBookingDBToDto(Booking booking)
+        public static BookingDto MapBookingDBToDto(Booking booking)
         {
-            return new BookingDTO
+            return new BookingDto
             {
                 BookingId = booking.BookingId,
                 BookingDate = booking.BookingDate,
                 FromDate = booking.FromDate,
                 RoomId = booking.RoomId,
                 ToDate = booking.ToDate,
-                UserId = booking.UserId
+                UserId = booking.UserId,
+                RoomDto = booking.Room == null ? new RoomDto() : 
+                                                    new RoomDto
+                                                    {
+                                                        RoomId = booking.Room.RoomId,
+                                                        RoomNumber = booking.Room.RoomNumber,
+                                                        RoomTypeId = booking.Room.RoomTypeId,
+                                                        RoomType = booking.Room.RoomType.RoomTypeName
+                                                    }
             };
         }
 
-        public static Booking MapBookingDtoToDB(BookingDTO bookingDto)
+        public static Booking MapBookingDtoToDB(BookingDto bookingDto)
         {
             return new Booking
             {

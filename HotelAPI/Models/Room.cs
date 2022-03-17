@@ -1,4 +1,7 @@
-﻿namespace Hotel.Models.Database
+﻿using System;
+using System.Collections.Generic;
+
+namespace HotelAPI.Models
 {
     public partial class Room
     {

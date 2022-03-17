@@ -47,8 +47,8 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddScoped<IRoomsRepository, RoomRepository>();
 builder.Services.AddScoped<IBookingsRepository, BookingRepository>();
 
-//builder.Services.AddScoped<IRoomService, RoomService>();
-//builder.Services.AddScoped<IBookingService, BookingService>();
+builder.Services.AddScoped<IRoomService, RoomService>();
+builder.Services.AddScoped<IBookingService, BookingService>();
 
 builder.Services.AddDbContext<HotelContext>(opt =>
 {

@@ -2,7 +2,7 @@
 
 namespace Hotel.Models.DTO
 {
-    public class LoginDTO
+    public class LoginDto
     {
         [Required(ErrorMessage = "User Name is required")]
         public string? Username { get; set; }

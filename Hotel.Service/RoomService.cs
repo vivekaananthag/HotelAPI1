@@ -1,9 +1,10 @@
-﻿using Hotel.Interface.DAL;
+﻿using Hotel.Interface.Service;
+using Hotel.Interface.DAL;
 using Hotel.Models.DTO;
 
 namespace Hotel.Service
 {
-    public class RoomService : IRoomsRepository
+    public class RoomService : IRoomService
     {        
         private IRoomsRepository _roomsRepository;
         
@@ -11,11 +12,11 @@ namespace Hotel.Service
         {
             _roomsRepository = roomsRepository;            
         }
-        public async Task<IEnumerable<RoomDTO>> GetRooms()
+        public async Task<IEnumerable<RoomDto>> GetRooms()
         {
             return await _roomsRepository.GetRooms();
         }
-        public async Task<RoomDTO> AddRoom(RoomDTO roomDto)
+        public async Task<RoomDto> AddRoom(RoomDto roomDto)
         {
             return await _roomsRepository.AddRoom(roomDto);
         }

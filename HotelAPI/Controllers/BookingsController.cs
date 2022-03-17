@@ -1,10 +1,12 @@
 ﻿#nullable disable
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Hotel.Models.DTO;
 using Hotel.Interface.Service;
 
 namespace HotelAPI.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class BookingsController : ControllerBase
@@ -18,7 +20,7 @@ namespace HotelAPI.Controllers
 
         // GET: api/Bookings
         [HttpGet]
-        public async Task<IEnumerable<BookingDTO>> GetBookings()
+        public async Task<IEnumerable<BookingDto>> GetBookings()
         {
             return await _bookingService.GetBookings();
         }
@@ -71,7 +73,7 @@ namespace HotelAPI.Controllers
         // POST: api/Bookings
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<BookingDTO> PostBooking(BookingDTO bookingDto)
+        public async Task<BookingDto> PostBooking(BookingDto bookingDto)
         {
             return await _bookingService.AddBooking(bookingDto);
         }

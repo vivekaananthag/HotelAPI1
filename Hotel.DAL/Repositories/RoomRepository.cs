@@ -15,10 +15,10 @@ namespace Hotel.DAL.Repositories
             this.appDbContext = appDbContext;
         }
 
-        public async Task<IEnumerable<RoomDTO>> GetRooms()
+        public async Task<IEnumerable<RoomDto>> GetRooms()
         {
             var rooms = await appDbContext.Rooms.Include(x=>x.RoomType).ToListAsync();
-            var roomsDto = new List<RoomDTO>();
+            var roomsDto = new List<RoomDto>();
             if (rooms != null && rooms.Count > 0)
             {
                 foreach (var room in rooms)
@@ -36,11 +36,11 @@ namespace Hotel.DAL.Repositories
         //        .FirstOrDefaultAsync(e => e.EmployeeId == employeeId);
         //}
 
-        public async Task<RoomDTO> AddRoom(RoomDTO roomDto)
+        public async Task<RoomDto> AddRoom(RoomDto roomDto)
         {
-            if (roomDto == null) return new RoomDTO { ErrorMessage = "Unable to add room" };
+            if (roomDto == null) return new RoomDto { ErrorMessage = "Unable to add room" };
 
-            var resultObj = new RoomDTO();
+            var resultObj = new RoomDto();
             var room = DTOMapper.MapRoomsDtoToDB(roomDto);
             try
             {

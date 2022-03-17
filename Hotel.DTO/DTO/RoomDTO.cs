@@ -1,11 +1,14 @@
-﻿namespace Hotel.Models.DTO
+﻿using System.ComponentModel.DataAnnotations;
+namespace Hotel.Models.DTO
 {
-    public class RoomDTO
+    public class RoomDto
     {
         public int RoomId { get; set; }
+        [Required(ErrorMessage = "Room type is required")]
         public int RoomTypeId { get; set; }
         public string RoomType { get; set; }
-        public string RoomName { get; set; } = null!;
+        [Required(ErrorMessage = "Room number is required")]
+        public string RoomNumber { get; set; } = null!;
         public string ErrorMessage { get; set; } = null!;
     }
 }

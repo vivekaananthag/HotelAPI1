@@ -14,10 +14,10 @@ namespace Hotel.DAL.Repositories
             this.appDbContext = appDbContext;
         }
 
-        public async Task<IEnumerable<BookingDTO>> GetBookings()
+        public async Task<IEnumerable<BookingDto>> GetBookings()
         {
-            var bookings = await appDbContext.Bookings.Include(x => x.User).ToListAsync();
-            var bookingsDto = new List<BookingDTO>();
+            var bookings = await appDbContext.Bookings.ToListAsync();
+            var bookingsDto = new List<BookingDto>();
             if (bookings != null && bookings.Count > 0)
             {
                 foreach (var booking in bookings)
@@ -29,22 +29,45 @@ namespace Hotel.DAL.Repositories
             return bookingsDto;
         }
 
-        public async Task<BookingDTO> AddBooking(BookingDTO bookingDto)
+        public IEnumerable<RoomDto> GetAvailableRooms(BookingDto bookingDetails)
         {
-            if (bookingDto == null) return new BookingDTO { ErrorMessage = "Unable to do booking"};
-            var resultObj = new BookingDTO();
+            var avaialbleRooms = (from r in appDbContext.Rooms
+                                  join b in appDbContext.Bookings
+                                  on r.RoomId equals b.BookingId into res
+                                  from b in res.DefaultIfEmpty()
+                                  where bookingDetails.RoomTypeId == r.RoomTypeId 
+                                  select new Room { 
+                                       RoomId = r.RoomId,
+                                      RoomNumber = r.RoomNumber,
+                                      RoomType = r.RoomType
+                                  }).ToList();
+            
+            var roomsDto = new List<RoomDto>();
+            if (avaialbleRooms != null && avaialbleRooms.Count > 0)
+            {
+                foreach (var avaialbleRoom in avaialbleRooms)
+                {
+                    var roomDto = DTOMapper.MapRoomsDBToDto(avaialbleRoom);
+                    roomsDto.Add(roomDto);
+                }
+            }
+            return roomsDto;
+        }
+
+
+
+        public async Task<BookingDto> AddBooking(BookingDto bookingDto)
+        {
+            if (bookingDto == null) return new BookingDto { Message = "Unable to do booking"};
+            var resultObj = new BookingDto();
             var booking = DTOMapper.MapBookingDtoToDB(bookingDto);
             try
             {
                 Booking maxBooking = appDbContext.Bookings.OrderByDescending(x => x.BookingId)
                     .FirstOrDefault() ?? new Booking();
                
-                booking.BookingId = maxBooking.BookingId + 1;                
-
-                var user = await appDbContext.Users
-                    .FirstOrDefaultAsync(e => e.UserId == bookingDto.UserId);
-                booking.User = user ?? new User();
-
+                booking.BookingId = maxBooking.BookingId + 1;   
+                
                 var room = await appDbContext.Rooms
                     .FirstOrDefaultAsync(e => e.RoomId == bookingDto.RoomId);
                 booking.Room = room ?? new Room();

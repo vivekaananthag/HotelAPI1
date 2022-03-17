@@ -4,8 +4,8 @@ namespace Hotel.Interface.Service
 {
     public interface IRoomService
     {
-        Task<IEnumerable<RoomDTO>> GetRooms();
-        Task<RoomDTO> AddRoom(RoomDTO roomDto);
+        Task<IEnumerable<RoomDto>> GetRooms();
+        Task<RoomDto> AddRoom(RoomDto roomDto);
     }
     //public interface IEmployeeRepository
     //{

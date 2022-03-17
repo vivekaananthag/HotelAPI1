@@ -1,9 +1,10 @@
-﻿using Hotel.Interface.DAL;
+﻿using Hotel.Interface.Service;
+using Hotel.Interface.DAL;
 using Hotel.Models.DTO;
 
 namespace Hotel.Service
 {
-    public class BookingService : IBookingsRepository
+    public class BookingService : IBookingService
     {
         private IBookingsRepository _bookingsRepository;
 
@@ -12,14 +13,32 @@ namespace Hotel.Service
             _bookingsRepository = bookingsRepository;
         }
 
-        public async Task<IEnumerable<BookingDTO>> GetBookings()
+        public async Task<IEnumerable<BookingDto>> GetBookings()
         {
             return await _bookingsRepository.GetBookings();
         }
 
-        public async Task<BookingDTO> AddBooking(BookingDTO bookingDto)
+        public async Task<BookingDto> AddBooking(BookingDto bookingDto)
         {
-            return await _bookingsRepository.AddBooking(bookingDto);
+            var returnObj = new BookingDto();
+            //Get lists of available rooms
+            var availableRooms = _bookingsRepository.GetAvailableRooms(bookingDto);
+
+            //Assign the first room from the list that matches the criteria
+            if (availableRooms != null && availableRooms.ToList().Count > 0)
+            {
+                bookingDto.RoomId = availableRooms.First().RoomId;
+                returnObj = await _bookingsRepository.AddBooking(bookingDto);
+                returnObj.Message = string.Format(Models.Constants.ErrorMessages.ROOM_BOOKING_SUCCESS
+                                            , availableRooms.First().RoomNumber);
+            }
+            else
+            {
+                bookingDto.Message = Models.Constants.ErrorMessages.NO_ROOMS_AVAILABLE;
+                returnObj = bookingDto;
+            }
+
+            return returnObj;
         }
     }
 }

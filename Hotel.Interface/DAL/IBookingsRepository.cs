@@ -3,7 +3,8 @@ namespace Hotel.Interface.DAL
 {
     public interface IBookingsRepository
     {
-        Task<IEnumerable<BookingDTO>> GetBookings();
-        Task<BookingDTO> AddBooking(BookingDTO bookingDto);
+        Task<IEnumerable<BookingDto>> GetBookings();
+        Task<BookingDto> AddBooking(BookingDto bookingDto);
+        IEnumerable<RoomDto> GetAvailableRooms(BookingDto bookingDetails);
     }
 }

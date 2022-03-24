@@ -1,8 +1,11 @@
-﻿namespace Hotel.Models.Database
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Hotel.Models.Database
 {
     public partial class Booking
     {
-        public int BookingId { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int BookingId { get; set; }        
         public int RoomId { get; set; }
         public string UserId { get; set; } = null!;
         public DateTime FromDate { get; set; }

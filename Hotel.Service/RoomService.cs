@@ -1,6 +1,7 @@
 ﻿using Hotel.Interface.Service;
 using Hotel.Interface.DAL;
 using Hotel.Models.DTO;
+using Microsoft.Data.SqlClient;
 
 namespace Hotel.Service
 {
@@ -14,11 +15,36 @@ namespace Hotel.Service
         }
         public async Task<IEnumerable<RoomDto>> GetRooms()
         {
-            return await _roomsRepository.GetRooms();
+            try
+            {
+                return await _roomsRepository.GetRooms();
+            }
+            catch
+            {                
+                throw;
+            }
         }
         public async Task<RoomDto> AddRoom(RoomDto roomDto)
         {
-            return await _roomsRepository.AddRoom(roomDto);
+            try
+            {
+                return await _roomsRepository.AddRoom(roomDto);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+        public async Task<IEnumerable<RoomTypeDto>> GetRoomTypes()
+        {
+            try
+            {
+                return await _roomsRepository.GetRoomTypes();
+            }
+            catch
+            {
+                throw;
+            }
         }
     }
 }

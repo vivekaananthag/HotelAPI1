@@ -4,6 +4,6 @@ namespace Hotel.Interface.Service
     public interface IBookingService
     {
         Task<IEnumerable<BookingDto>> GetBookings();
-        Task<BookingDto> AddBooking(BookingDto bookingDto);
+        Task<BookingDto> AddBooking(AddBookingDto bookingDto);       
     }
 }

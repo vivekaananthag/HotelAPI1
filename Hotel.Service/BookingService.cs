@@ -15,30 +15,56 @@ namespace Hotel.Service
 
         public async Task<IEnumerable<BookingDto>> GetBookings()
         {
-            return await _bookingsRepository.GetBookings();
-        }
+            try
+            {
+                return await _bookingsRepository.GetBookings();
+            }
+            catch
+            {
+                throw;
+            }
+        }        
 
-        public async Task<BookingDto> AddBooking(BookingDto bookingDto)
+        public async Task<BookingDto> AddBooking(AddBookingDto bookingDto)
         {
-            var returnObj = new BookingDto();
-            //Get lists of available rooms
-            var availableRooms = _bookingsRepository.GetAvailableRooms(bookingDto);
-
-            //Assign the first room from the list that matches the criteria
-            if (availableRooms != null && availableRooms.ToList().Count > 0)
+            try
             {
-                bookingDto.RoomId = availableRooms.First().RoomId;
-                returnObj = await _bookingsRepository.AddBooking(bookingDto);
-                returnObj.Message = string.Format(Models.Constants.ErrorMessages.ROOM_BOOKING_SUCCESS
-                                            , availableRooms.First().RoomNumber);
-            }
-            else
-            {
-                bookingDto.Message = Models.Constants.ErrorMessages.NO_ROOMS_AVAILABLE;
-                returnObj = bookingDto;
-            }
+                var returnObj = new BookingDto();
 
-            return returnObj;
+                //Do date validation
+                if (bookingDto == null) return null;
+
+                if (bookingDto.FromDate < DateTime.Now || 
+                    bookingDto.FromDate == DateTime.MinValue || bookingDto.FromDate > bookingDto.ToDate)
+                    returnObj.Message = Models.Constants.Messages.INVALID_DATE_FROM;
+
+                if (bookingDto.ToDate == DateTime.MinValue)
+                    returnObj.Message = Models.Constants.Messages.INVALID_DATE_TO;
+
+                if (string.IsNullOrEmpty(returnObj.Message))
+                {
+                    //Get lists of available rooms
+                    var availableRooms = _bookingsRepository.GetAvailableRooms(bookingDto);
+
+                    //Assign the first room from the list that matches the criteria
+                    if (availableRooms != null && availableRooms.ToList().Count > 0)
+                    {                        
+                        returnObj = await _bookingsRepository.AddBooking(bookingDto, availableRooms.First().RoomId);
+                        returnObj.Message = string.Format(Models.Constants.Messages.ROOM_BOOKING_SUCCESS
+                                                    , availableRooms.First().RoomNumber);
+                    }
+                    else
+                    {
+                        returnObj.Message = Models.Constants.Messages.NO_ROOMS_AVAILABLE;                        
+                    }
+                }
+
+                return returnObj;
+            }
+            catch
+            {
+                throw;
+            }
         }
     }
 }

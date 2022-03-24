@@ -34,6 +34,8 @@ namespace Hotel.Models.Database
 
                 entity.Property(e => e.FromDate).HasColumnType("datetime");
 
+                entity.Property(e => e.BookingId).ValueGeneratedOnAdd();
+
                 entity.Property(e => e.ToDate).HasColumnType("datetime");
 
                 entity.Property(e => e.UserId).HasMaxLength(450);
@@ -53,6 +55,8 @@ namespace Hotel.Models.Database
                     .IsUnique();
 
                 entity.Property(e => e.Created).HasColumnType("datetime");
+
+                entity.Property(e => e.RoomId).ValueGeneratedOnAdd();
 
                 entity.Property(e => e.RoomNumber).HasMaxLength(50);
 

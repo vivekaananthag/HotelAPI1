@@ -12,70 +12,67 @@ namespace HotelAPI.Controllers
     public class BookingsController : ControllerBase
     {
         private readonly IBookingService _bookingService;
+        private IRoomService _roomService;
 
-        public BookingsController(IBookingService bookingService)
+        public BookingsController(IBookingService bookingService, IRoomService roomService)
         {
             _bookingService = bookingService;
+            _roomService = roomService;
         }
 
+        /// <summary>
+        /// API Method to retrieve a list of bookings
+        /// </summary>
+        /// <returns></returns>
         // GET: api/Bookings
         [HttpGet]
-        public async Task<IEnumerable<BookingDto>> GetBookings()
-        {
-            return await _bookingService.GetBookings();
+        public async Task<ActionResult<IEnumerable<BookingDto>>> GetBookings()
+        {          
+            try
+            {
+                var bookings = await _bookingService.GetBookings();
+                return Ok(bookings);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            }
         }
 
-        // GET: api/Bookings/5
-        //[HttpGet("{id}")]
-        //public async Task<ActionResult<Hotel.DTO.DBModels.Booking>> GetBooking(int id)
-        //{
-        //    var booking = await _context.Bookings.FindAsync(id);
-
-        //    if (booking == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    return booking;
-        //}
-
-        // PUT: api/Bookings/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        //[HttpPut("{id}")]
-        //public async Task<IActionResult> PutBooking(int id, Hotel.DTO.DBModels.Booking booking)
-        //{
-        //    if (id != booking.BookingId)
-        //    {
-        //        return BadRequest();
-        //    }
-
-        //    _context.Entry(booking).State = EntityState.Modified;
-
-        //    try
-        //    {
-        //        await _context.SaveChangesAsync();
-        //    }
-        //    catch (DbUpdateConcurrencyException)
-        //    {
-        //        if (!BookingExists(id))
-        //        {
-        //            return NotFound();
-        //        }
-        //        else
-        //        {
-        //            throw;
-        //        }
-        //    }
-
-        //    return NoContent();
-        //}
-
-        // POST: api/Bookings
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<BookingDto> PostBooking(BookingDto bookingDto)
+        // GET: api/RoomTypes
+        [Route("GetRoomTypes")]
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<RoomTypeDto>>> GetRoomTypes()
         {
-            return await _bookingService.AddBooking(bookingDto);
+            try
+            {
+                var roomTypes = await _roomService.GetRoomTypes();
+                return Ok(roomTypes);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            }
+        }
+        
+        [Route("AddBooking")]
+        [HttpPost]
+        public async Task<ActionResult<BookingDto>> PostBooking(AddBookingDto bookingDto)
+        {
+            try
+            {
+                var booking = await _bookingService.AddBooking(bookingDto);
+                if (booking == null)
+                    return StatusCode(StatusCodes.Status500InternalServerError, "Unexpected error while adding a room");
+                if(!string.IsNullOrEmpty(booking.Message))
+                    return StatusCode(StatusCodes.Status400BadRequest, booking.Message);
+
+                return Ok(booking);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            }   
         }
 
         // DELETE: api/Bookings/5

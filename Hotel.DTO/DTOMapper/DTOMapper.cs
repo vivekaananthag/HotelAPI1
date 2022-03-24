@@ -21,10 +21,10 @@ namespace Hotel.Models.DTOMapper
         public static Room MapRoomsDtoToDB(RoomDto roomDto)
         {
             var room = new Room
-            {
-                RoomId = roomDto.RoomId,
+            {                
                 RoomNumber = roomDto.RoomNumber,
-                RoomTypeId = roomDto.RoomTypeId
+                RoomTypeId = roomDto.RoomTypeId,
+                Created = DateTime.Now
             };
             return room;
         }
@@ -45,19 +45,18 @@ namespace Hotel.Models.DTOMapper
                                                         RoomId = booking.Room.RoomId,
                                                         RoomNumber = booking.Room.RoomNumber,
                                                         RoomTypeId = booking.Room.RoomTypeId,
-                                                        RoomType = booking.Room.RoomType.RoomTypeName
+                                                        RoomType = booking.Room.RoomType == null 
+                                                                ? String.Empty : booking.Room.RoomType.RoomTypeName
                                                     }
             };
         }
 
-        public static Booking MapBookingDtoToDB(BookingDto bookingDto)
+        public static Booking MapAddBookingDtoToDB(AddBookingDto bookingDto)
         {
             return new Booking
-            {
-                BookingId = bookingDto.BookingId,
-                BookingDate = bookingDto.BookingDate,
-                FromDate = bookingDto.FromDate,
-                RoomId = bookingDto.RoomId,
+            {   
+                BookingDate = DateTime.Now,
+                FromDate = bookingDto.FromDate,                
                 ToDate = bookingDto.ToDate,
                 UserId = bookingDto.UserId
             };

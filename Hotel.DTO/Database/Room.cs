@@ -1,4 +1,6 @@
-﻿namespace Hotel.Models.Database
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Hotel.Models.Database
 {
     public partial class Room
     {
@@ -7,6 +9,7 @@
             Bookings = new HashSet<Booking>();
         }
 
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int RoomId { get; set; }
         public int RoomTypeId { get; set; }
         public string RoomNumber { get; set; } = null!;

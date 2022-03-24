@@ -3,10 +3,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Hotel.Models.DTO;
 using Hotel.Interface.Service;
+using Microsoft.Data.SqlClient;
 
 namespace HotelAPI.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = Hotel.Models.Constants.UserRoles.Admin)]
     [Route("api/[controller]")]
     [ApiController]
     public class RoomsController : ControllerBase
@@ -18,64 +19,57 @@ namespace HotelAPI.Controllers
             _roomService = roomService;
         }
 
-        // GET: api/Rooms
-        [Route("GetRooms")]
-        [HttpGet]
-        public async Task<IEnumerable<RoomDto>> GetRooms()
-        {
-            return await _roomService.GetRooms();
+        // GET: api/Rooms        
+        [HttpGet]        
+        public async Task<ActionResult<IEnumerable<RoomDto>>> GetRooms()
+        {            
+            try
+            {
+                var rooms = await _roomService.GetRooms();
+                return Ok(rooms);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            }                 
         }
 
-        //// GET: api/Rooms/5
-        //[HttpGet("{id}")]
-        //public async Task<ActionResult<RoomDTO>> GetRoom(int id)
-        //{
-        //    var room = await _context.Rooms.FindAsync(id);
-
-        //    if (room == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    return room;
-        //}
-
-        // PUT: api/Rooms/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        //[HttpPut("{id}")]
-        //public async Task<IActionResult> PutRoom(int id, Hotel.DTO.DBModels.Room room)
-        //{
-        //    if (id != room.RoomId)
-        //    {
-        //        return BadRequest();
-        //    }
-
-        //    _context.Entry(room).State = EntityState.Modified;
-
-        //    try
-        //    {
-        //        await _context.SaveChangesAsync();
-        //    }
-        //    catch (DbUpdateConcurrencyException)
-        //    {
-        //        if (!RoomExists(id))
-        //        {
-        //            return NotFound();
-        //        }
-        //        else
-        //        {
-        //            throw;
-        //        }
-        //    }
-
-        //    return NoContent();
-        //}
+        // GET: api/RoomTypes
+        [Route("GetRoomTypes")]
+        [HttpGet]        
+        public async Task<ActionResult<IEnumerable<RoomTypeDto>>> GetRoomTypes()
+        {
+            try
+            {
+                var roomTypes = await _roomService.GetRoomTypes();
+                return Ok(roomTypes);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            }
+        }
 
         [Route("AddRoom")]
         [HttpPost]
-        public async Task<RoomDto> PostRoom(RoomDto roomDto)
-        {
-            return await _roomService.AddRoom(roomDto);
+        public async Task<ActionResult<RoomDto>> PostRoom(RoomDto roomDto)
+        {            
+            try
+            {
+                var room = await _roomService.AddRoom(roomDto);   
+                if(room == null)
+                    return StatusCode(StatusCodes.Status500InternalServerError, "Unexpected error while adding a room");                
+                return Ok(room);
+            }            
+            catch (Exception e)
+            {                
+                if (e.InnerException is SqlException sqlException
+                    && (sqlException.Number == 2627 || sqlException.Number == 2601))
+                {
+                    return StatusCode(StatusCodes.Status409Conflict, "Room number cannot be  duplicate");
+                }
+                    return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            }
         }
 
         //// DELETE: api/Rooms/5

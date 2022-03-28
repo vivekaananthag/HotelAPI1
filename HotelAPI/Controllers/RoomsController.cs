@@ -21,11 +21,11 @@ namespace HotelAPI.Controllers
 
         // GET: api/Rooms        
         [HttpGet]        
-        public async Task<ActionResult<IEnumerable<RoomDto>>> GetRooms()
+        public async Task<ActionResult<IEnumerable<RoomDto>>> GetRooms(DateTime? date)
         {            
             try
-            {
-                var rooms = await _roomService.GetRooms();
+            {                
+                var rooms = await _roomService.GetRooms(date);
                 return Ok(rooms);
             }
             catch (Exception e)
@@ -52,7 +52,7 @@ namespace HotelAPI.Controllers
 
         [Route("AddRoom")]
         [HttpPost]
-        public async Task<ActionResult<RoomDto>> PostRoom(RoomDto roomDto)
+        public async Task<ActionResult<RoomDto>> PostRoom(AddRoomDto roomDto)
         {            
             try
             {

@@ -13,18 +13,18 @@ namespace Hotel.Service
         {
             _roomsRepository = roomsRepository;            
         }
-        public async Task<IEnumerable<RoomDto>> GetRooms()
+        public async Task<IEnumerable<RoomDto>> GetRooms(DateTime? date)
         {
             try
             {
-                return await _roomsRepository.GetRooms();
+                return await _roomsRepository.GetRooms(date);
             }
             catch
             {                
                 throw;
             }
         }
-        public async Task<RoomDto> AddRoom(RoomDto roomDto)
+        public async Task<RoomDto> AddRoom(AddRoomDto roomDto)
         {
             try
             {

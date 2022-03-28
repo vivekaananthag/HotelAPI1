@@ -19,11 +19,17 @@ namespace Hotel.DAL.Repositories
         /// Get a list of rooms
         /// </summary>
         /// <returns></returns>
-        public async Task<IEnumerable<RoomDto>> GetRooms()
+        public async Task<IEnumerable<RoomDto>> GetRooms(DateTime? date)
         {
             try
             {
-                var rooms = await appDbContext.Rooms.Include(x => x.RoomType).ToListAsync();
+                //var rooms = await appDbContext.Rooms.Include(x => x.RoomType).ToListAsync();
+                if (!date.HasValue) date = DateTime.Today;
+                var rooms = await (from ro in appDbContext.Rooms.Include(x => x.RoomType)
+                                   join bo in appDbContext.Bookings
+                                   on ro.RoomId equals bo.RoomId
+                                   where bo.FromDate <= date.Value && bo.ToDate >= date.Value
+                                   select ro).ToListAsync();
                 var roomsDto = new List<RoomDto>();
                 if (rooms != null && rooms.Count > 0)
                 {
@@ -74,16 +80,21 @@ namespace Hotel.DAL.Repositories
         /// <summary>
         /// DAL Method to add a new room
         /// </summary>
-        /// <param name="roomDto"></param>
+        /// <param name="addRoomDto"></param>
         /// <returns></returns>
-        public async Task<RoomDto> AddRoom(RoomDto roomDto)
+        public async Task<RoomDto> AddRoom(AddRoomDto addRoomDto)
         {
             try
             {
-                if (roomDto == null) return null;
-
+                if (addRoomDto == null) return null;
                 var resultObj = new RoomDto();
-                var room = DTOMapper.MapRoomsDtoToDB(roomDto);
+
+                var room = new Room
+                {
+                    RoomTypeId = addRoomDto.RoomTypeId,
+                    RoomNumber = addRoomDto.RoomNumber,
+                    Created = DateTime.Now                    
+                };
                                 
                 var roomTypes = await appDbContext.RoomTypes.ToListAsync();
                 room.RoomType = roomTypes.FirstOrDefault(e => e.RoomTypeId == room.RoomTypeId) ?? new RoomType();
@@ -97,7 +108,7 @@ namespace Hotel.DAL.Repositories
                     resultObj = DTOMapper.MapRoomsDBToDto(result.Entity);
                 }
 
-                return roomDto;
+                return resultObj;
             }
             catch
             {

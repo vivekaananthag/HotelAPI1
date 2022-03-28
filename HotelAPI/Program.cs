@@ -42,7 +42,6 @@ builder.Services.AddAuthentication(options =>
 });
 
 builder.Services.AddControllers();
-builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddScoped<IRoomsRepository, RoomRepository>();
 builder.Services.AddScoped<IBookingsRepository, BookingRepository>();
@@ -59,6 +58,11 @@ builder.Services.AddDbContext<ApplicationDbContext>(opt =>
     opt.UseSqlServer(builder.Configuration.GetConnectionString("ConnStr"));
 });
 
+builder.Services.AddCors(p => p.AddPolicy("corsapp", builder =>
+{
+    builder.WithOrigins("*").AllowAnyMethod().AllowAnyHeader();
+}));
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -72,6 +76,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors("corsapp");
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
